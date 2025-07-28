@@ -18,6 +18,46 @@ that are shared between `nanorpc`, `protomcp`, and related projects.
 - **Error Handling**: Consistent error patterns across projects
 - **Utility Functions**: General-purpose helper functions
 
+## Test Utilities
+
+The `testutils` package provides a foundation for testing across
+protomcp.org projects:
+
+### T Interface
+
+A minimal interface that matches a subset of `testing.TB`:
+
+```go
+type T interface {
+    Helper()
+    Errorf(format string, args ...any)
+    Fatalf(format string, args ...any)
+}
+```
+
+This interface is satisfied by `*testing.T` and allows for creating test
+helpers that work with both real tests and mock implementations.
+
+### MockT
+
+A test implementation of the T interface for testing test helpers:
+
+```go
+// Create a new MockT
+m := testutils.NewMockT()
+
+// Use it in place of *testing.T
+MyTestHelper(m, someValue)
+
+// Inspect what happened
+errors := m.GetErrorf()        // []string of all Errorf calls
+fatalMessages := m.GetFatalf() // []string of all Fatalf calls
+helpers := m.GetHelperCalls()  // int count of Helper() calls
+
+// Reset for reuse
+m.Reset()
+```
+
 ## Usage
 
 This package is designed to be imported by other protomcp.org projects:
