@@ -58,6 +58,49 @@ helpers := m.GetHelperCalls()  // int count of Helper() calls
 m.Reset()
 ```
 
+### Assertion Functions
+
+The testutils package provides a comprehensive set of assertion functions that
+all return bool, allowing for conditional logic:
+
+```go
+// Basic assertions
+testutils.AssertEqual(t, expected, actual, "value")
+testutils.AssertNotEqual(t, unexpected, actual, "value")
+
+// Nil checking
+testutils.AssertNil(t, ptr, "pointer should be nil")
+testutils.AssertNotNil(t, result, "result required")
+
+// Boolean assertions
+testutils.AssertTrue(t, condition, "condition check")
+testutils.AssertFalse(t, flag, "flag should be false")
+
+// Error handling
+testutils.AssertError(t, err, "operation should fail")
+testutils.AssertNoError(t, err, "operation failed")
+testutils.AssertErrorIs(t, err, ErrExpected, "wrong error type")
+
+// String and type checking
+testutils.AssertContains(t, output, "expected text", "output check")
+value, ok := testutils.AssertTypeIs[*Config](t, result, "type assertion")
+```
+
+All assertions support formatted names:
+
+```go
+testutils.AssertEqual(t, 42, value, "item %d value", index)
+```
+
+### Helper Functions
+
+```go
+// IsNil checks if a value is nil using reflection
+if testutils.IsNil(value) {
+    // handle nil case
+}
+```
+
 ## Usage
 
 This package is designed to be imported by other protomcp.org projects:
