@@ -6,6 +6,7 @@
     "Carryforward",
     "coverprofile",
     "coverpkg",
+    "darvaza",
     "Errorf",
     "Fatalf",
     "fieldalignment",
@@ -13,7 +14,9 @@
     "GOTEST",
     "GOXTOOLS",
     "languagetool",
+    "lazybuffer",
     "nanorpc",
+    "Println",
     "protomcp",
     "shellcheck",
     "testutils"
