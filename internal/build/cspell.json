@@ -6,16 +6,18 @@
     "Carryforward",
     "coverprofile",
     "coverpkg",
+    "darvaza",
     "Errorf",
     "fieldalignment",
     "golangci",
     "GOTEST",
     "GOXTOOLS",
     "languagetool",
+    "lazybuffer",
     "nanorpc",
+    "Println",
     "protomcp",
-    "shellcheck",
-    "testutils"
+    "shellcheck"
   ],
   "ignorePaths": [
     "*.lock",
