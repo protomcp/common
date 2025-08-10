@@ -100,6 +100,7 @@ Tool configurations are stored in `internal/build/`:
 - **Common utilities**: General-purpose helper functions
 - **Test utilities**: Shared testing helpers and assertions
 - **Error patterns**: Consistent error handling across projects
+- **Generator submodule**: Common utilities for protoc plugin development
 
 ### Key Features
 
@@ -107,6 +108,14 @@ Tool configurations are stored in `internal/build/`:
 - **Interface-based**: Prefer interfaces for flexibility
 - **Well-tested**: High test coverage for reliability
 - **Documentation**: All public APIs must be documented
+
+### Submodules
+
+- **generator/**: Utilities for protoc plugin development
+  - Descriptor traversal and type checking
+  - Path construction and naming utilities
+  - Visitor patterns for walking descriptor trees
+  - Code generation helpers
 
 ## Development Workflow
 

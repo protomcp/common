@@ -1,6 +1,7 @@
 # Common
 
 [![Go Reference][godoc-badge]][godoc-link]
+[![Go Report Card][goreportcard-badge]][goreportcard-link]
 [![codecov][codecov-badge]][codecov-link]
 
 Common provides shared utilities for protomcp.org projects.
@@ -17,6 +18,8 @@ shared between `nanorpc`, `protomcp`, and related projects.
 - **Error Handling**: Consistent error patterns across projects
 - **Utility Functions**: General-purpose helper functions like slice tools
 - **Testing Support**: Integrates with `darvaza.org/core` for test utilities
+- **Generator Utilities**: Common helpers for protoc plugin development in the
+  `generator` submodule
 
 ## Slice Utilities
 
@@ -214,5 +217,7 @@ See [LICENCE.txt](LICENCE.txt) for licensing information.
 
 [godoc-badge]: https://pkg.go.dev/badge/protomcp.org/common.svg
 [godoc-link]: https://pkg.go.dev/protomcp.org/common
+[goreportcard-badge]: https://goreportcard.com/badge/protomcp.org/common
+[goreportcard-link]: https://goreportcard.com/report/protomcp.org/common
 [codecov-badge]: https://codecov.io/gh/protomcp/common/graph/badge.svg
 [codecov-link]: https://codecov.io/gh/protomcp/common
