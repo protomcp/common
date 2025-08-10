@@ -20,6 +20,8 @@ shared between `nanorpc`, `protomcp`, and related projects.
 - **Testing Support**: Integrates with `darvaza.org/core` for test utilities
 - **Generator Utilities**: Common helpers for protoc plugin development in the
   `generator` submodule
+- **Options System**: Flexible option override system for protoc plugins in the
+  `options` submodule
 
 ## Slice Utilities
 

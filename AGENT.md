@@ -117,6 +117,12 @@ Tool configurations are stored in `internal/build/`:
   - Visitor patterns for walking descriptor trees
   - Code generation helpers
 
+- **options/**: Option override system for protoc plugins
+  - Multi-layer configuration hierarchy
+  - Pattern-based option matching
+  - Hook system for transformations
+  - Context-aware overrides
+
 ## Development Workflow
 
 ### MANDATORY: Test-Driven Development (TDD)
