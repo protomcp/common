@@ -14,8 +14,7 @@
     "languagetool",
     "nanorpc",
     "protomcp",
-    "shellcheck",
-    "testutils"
+    "shellcheck"
   ],
   "ignorePaths": [
     "*.lock",

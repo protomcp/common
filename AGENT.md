@@ -121,9 +121,9 @@ Tool configurations are stored in `internal/build/`:
 
 **Test Infrastructure**:
 
-- Test utilities in `testutils/` package
 - Focus on table-driven tests for comprehensive coverage
 - Use subtests for better test organization
+- Test utilities will be added as needed in future
 
 ### Before Starting Work
 
@@ -158,7 +158,7 @@ The project enforces quality through:
 
 - **Table-driven tests**: Preferred for comprehensive coverage
 - **Subtests**: Use `t.Run()` for better organization
-- **Test helpers**: Create reusable test utilities in `testutils/`
+- **Test helpers**: Use standard Go testing patterns
 - **Isolation**: Tests should not depend on external resources
 
 ### Running Tests
