@@ -121,9 +121,9 @@ Tool configurations are stored in `internal/build/`:
 
 **Test Infrastructure**:
 
+- Use test utilities from `darvaza.org/core` package
 - Focus on table-driven tests for comprehensive coverage
 - Use subtests for better test organization
-- Test utilities will be added as needed in future
 
 ### Before Starting Work
 
@@ -158,7 +158,7 @@ The project enforces quality through:
 
 - **Table-driven tests**: Preferred for comprehensive coverage
 - **Subtests**: Use `t.Run()` for better organization
-- **Test helpers**: Use standard Go testing patterns
+- **Test helpers**: Use utilities from `darvaza.org/core` for consistency
 - **Isolation**: Tests should not depend on external resources
 
 ### Running Tests
