@@ -57,7 +57,7 @@ make generate
 This project uses the same build system as other protomcp.org repositories:
 
 - **Module**: `protomcp.org/common`
-- **No submodules**: Single module structure for simplicity
+- **Submodules**: Organized as Go submodules (generator, with more to follow)
 - **Shared tooling**: Same linting and quality tools as siblings
 
 ### Tool Integration
@@ -97,16 +97,25 @@ Tool configurations are stored in `internal/build/`:
 
 ### Core Components
 
-- **Common utilities**: General-purpose helper functions
-- **Test utilities**: Shared testing helpers and assertions
-- **Error patterns**: Consistent error handling across projects
+- **Common utilities**: General-purpose helper functions.
+- **Test utilities**: Shared testing helpers and assertions.
+- **Error patterns**: Consistent error handling across projects.
+- **Generator submodule**: Common utilities for `protoc` plugin development.
 
 ### Key Features
 
-- **Minimal dependencies**: Keep external dependencies to a minimum
-- **Interface-based**: Prefer interfaces for flexibility
-- **Well-tested**: High test coverage for reliability
-- **Documentation**: All public APIs must be documented
+- **Minimal dependencies**: Keep external dependencies to a minimum.
+- **Interface-based**: Prefer interfaces for flexibility.
+- **Well-tested**: High test coverage for reliability.
+- **Documentation**: All public APIs must be documented.
+
+### Submodules
+
+- **generator/**: Utilities for `protoc` plugin development
+  - Descriptor traversal and type checking.
+  - Path construction and naming utilities.
+  - Visitor patterns for walking descriptor trees.
+  - Code generation helpers.
 
 ## Development Workflow
 
