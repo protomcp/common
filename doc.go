@@ -28,4 +28,25 @@
 //	// Or completely release the underlying array
 //	responses := []Response{{...}, {...}, {...}}
 //	responses = ClearAndNilSlice(responses)  // All cleared, slice is nil
+//
+// # String Building
+//
+// LazyBuffer provides a convenient wrapper around strings.Builder that eliminates
+// the need for error handling. It's particularly useful for code generation,
+// template rendering, or any scenario where you're building strings incrementally:
+//
+//   - WriteString: Appends strings, ignoring empty ones
+//   - WriteRunes: Appends individual runes
+//   - Printf: Appends formatted strings
+//   - All methods support chaining and nil-safety
+//
+// Example usage:
+//
+//	var buf LazyBuffer
+//	output := buf.WriteString("func ").
+//		WriteString(name).
+//		WriteRunes('(').
+//		Printf("ctx %s", contextType).
+//		WriteRunes(')').
+//		String()
 package common

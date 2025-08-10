@@ -13,7 +13,9 @@
     "GOTEST",
     "GOXTOOLS",
     "languagetool",
+    "lazybuffer",
     "nanorpc",
+    "Println",
     "protomcp",
     "shellcheck"
   ],
