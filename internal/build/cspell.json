@@ -10,16 +10,20 @@
     "descriptorpb",
     "Errorf",
     "fieldalignment",
+    "godoc",
     "golangci",
     "GOTEST",
     "GOXTOOLS",
     "languagetool",
     "lazybuffer",
     "nanorpc",
+    "pluginpb",
     "Println",
     "protoc",
     "protomcp",
-    "shellcheck"
+    "SFIXED",
+    "shellcheck",
+    "Wrapf"
   ],
   "ignorePaths": [
     "*.lock",

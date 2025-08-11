@@ -1,46 +1,122 @@
-# Generator Module (PLACEHOLDER)
+# Generator Module
 
 [![Go Reference][godoc-badge]][godoc-link]
 [![Go Report Card][goreportcard-badge]][goreportcard-link]
 [![codecov][codecov-badge]][codecov-link]
 
-> [!WARNING]
-> **PLACEHOLDER MODULE - NOT YET IMPLEMENTED**
->
-> This module is a placeholder showing the planned architecture for common
-> utilities for protoc plugin code generators. It will provide helpers for
-> working with protocol buffer descriptors, managing code generation, and
-> traversing descriptor trees.
-
 ## Overview
 
-**PLANNED FUNCTIONALITY (NOT YET AVAILABLE):**
+The generator module provides essential utilities that all protoc plugins need
+when generating code from protocol buffer descriptors. It serves as a foundation
+for building robust code generators with consistent patterns.
 
-The generator module will provide essential utilities that all protoc plugins
-need when generating code from protocol buffer descriptors. It will serve as a
-foundation for building robust code generators with consistent patterns.
+## Status
+
+### ✅ Implemented
+
+- **Descriptor Type Checking** - Complete set of type checking and casting
+  functions
+- **Field Characteristic Checking** - Comprehensive field property detection
+
+### 🚧 Planned
+
+- Path and Naming Utilities
+- Descriptor Traversal
+- Visitor Pattern
+- Type Resolution
+- Context Management
+- Dependency Analysis
+- Code Generation Helpers
 
 ## Core Utilities
 
 ### Descriptor Type Checking
 
-Essential for the options module and other generators:
+All type checking functions follow the `AsFoo`/`IsFoo` pattern where `AsFoo`
+returns the typed descriptor and a boolean, while `IsFoo` is a convenience
+wrapper that only returns the boolean.
+
+#### Type Casting and Checking
 
 ```go
-// Type checking - needed by options for conditional logic
+// Cast to specific descriptor types and verify
+func AsMessageType(desc proto.Message, name string) (
+    *descriptorpb.DescriptorProto, bool)
+func AsFieldType(desc proto.Message) (*descriptorpb.FieldDescriptorProto, bool)
+func AsServiceType(desc proto.Message) (
+    *descriptorpb.ServiceDescriptorProto, bool)
+func AsMethodType(desc proto.Message) (
+    *descriptorpb.MethodDescriptorProto, bool)
+func AsEnumType(desc proto.Message) (*descriptorpb.EnumDescriptorProto, bool)
+func AsFileType(desc proto.Message) (*descriptorpb.FileDescriptorProto, bool)
+
+// Boolean checks (wrappers around AsFoo functions)
 func IsMessageType(desc proto.Message, name string) bool
 func IsFieldType(desc proto.Message) bool
 func IsServiceType(desc proto.Message) bool
 func IsMethodType(desc proto.Message) bool
 func IsEnumType(desc proto.Message) bool
 func IsFileType(desc proto.Message) bool
+```
 
-// Specific type checks
+#### Field Characteristics
+
+```go
+// Cast and check field characteristics
+func AsRepeatedField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+func AsMapField(field proto.Message) (*descriptorpb.FieldDescriptorProto, bool)
+func AsOneOfField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+func AsOptionalField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+func AsRequiredField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+func AsScalarField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+func AsMessageField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+func AsEnumField(field proto.Message) (
+    *descriptorpb.FieldDescriptorProto, bool)
+
+// Boolean checks (wrappers around AsFoo functions)
 func IsRepeatedField(field proto.Message) bool
 func IsMapField(field proto.Message) bool
-func IsOneofField(field proto.Message) bool
+func IsOneOfField(field proto.Message) bool
 func IsOptionalField(field proto.Message) bool
 func IsRequiredField(field proto.Message) bool
+func IsScalarField(field proto.Message) bool
+func IsMessageField(field proto.Message) bool
+func IsEnumField(field proto.Message) bool
+```
+
+#### Usage Example
+
+```go
+// Using the AsFoo pattern for type-safe access
+if field, ok := AsFieldType(desc); ok {
+    // field is now typed as *descriptorpb.FieldDescriptorProto
+    if repeatedField, ok := AsRepeatedField(field); ok {
+        fmt.Printf("Field %s is repeated\n", repeatedField.GetName())
+    }
+}
+
+// Simple boolean check when you don't need the typed object
+if IsMessageType(desc, "MyMessage") {
+    // Process message type
+}
+
+// Chaining checks for specific field types
+if field, ok := AsFieldType(desc); ok {
+    switch {
+    case IsScalarField(field):
+        // Handle scalar field
+    case IsMessageField(field):
+        // Handle message field
+    case IsEnumField(field):
+        // Handle enum field
+    }
+}
 ```
 
 ### Path and Naming Utilities
@@ -283,10 +359,13 @@ func (r *Registry) applyMessageHooks(file, msg proto.Message) error {
 
 ---
 
-**NOTE:** This entire module is currently a placeholder demonstrating the
-intended architecture and planned features. Actual implementation will be added
-in future releases as the protomcp.org ecosystem develops and the need for
-these utilities becomes concrete.
+## Implementation Status
+
+**Phase 1 Complete**: Descriptor type checking and field characteristic
+detection are fully implemented with 98.2% test coverage.
+
+**Next Phases**: Additional functionality will be added incrementally as the
+protomcp.org ecosystem develops.
 
 [godoc-badge]: https://pkg.go.dev/badge/protomcp.org/common/generator.svg
 [godoc-link]: https://pkg.go.dev/protomcp.org/common/generator
