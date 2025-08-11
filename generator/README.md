@@ -39,9 +39,8 @@ wrapper that only returns the boolean.
 #### Type Casting and Checking
 
 ```go
-// Cast to specific descriptor types and verify
-func AsMessageType(desc proto.Message, name string) (
-    *descriptorpb.DescriptorProto, bool)
+// Cast to specific descriptor types
+func AsMessage(desc proto.Message) (*descriptorpb.DescriptorProto, bool)
 func AsFieldType(desc proto.Message) (*descriptorpb.FieldDescriptorProto, bool)
 func AsServiceType(desc proto.Message) (
     *descriptorpb.ServiceDescriptorProto, bool)
@@ -50,7 +49,12 @@ func AsMethodType(desc proto.Message) (
 func AsEnumType(desc proto.Message) (*descriptorpb.EnumDescriptorProto, bool)
 func AsFileType(desc proto.Message) (*descriptorpb.FileDescriptorProto, bool)
 
+// Cast to message descriptor and verify name
+func AsMessageType(desc proto.Message, name string) (
+    *descriptorpb.DescriptorProto, bool)
+
 // Boolean checks (wrappers around AsFoo functions)
+func IsMessage(desc proto.Message) bool
 func IsMessageType(desc proto.Message, name string) bool
 func IsFieldType(desc proto.Message) bool
 func IsServiceType(desc proto.Message) bool

@@ -7,6 +7,22 @@ import (
 	"google.golang.org/protobuf/types/descriptorpb"
 )
 
+// AsMessage attempts to cast the descriptor to a message descriptor
+// Returns the message descriptor and true if successful, nil and false otherwise
+func AsMessage(desc proto.Message) (*descriptorpb.DescriptorProto, bool) {
+	if desc == nil {
+		return nil, false
+	}
+	msgDesc, ok := desc.(*descriptorpb.DescriptorProto)
+	return msgDesc, ok
+}
+
+// IsMessage checks if the descriptor is a message descriptor
+func IsMessage(desc proto.Message) bool {
+	_, ok := AsMessage(desc)
+	return ok
+}
+
 // AsMessageType attempts to cast the descriptor to a message descriptor and checks if it has the given name
 // Returns the message descriptor and true if successful and name matches, nil and false otherwise
 func AsMessageType(desc proto.Message, typeName string) (*descriptorpb.DescriptorProto, bool) {

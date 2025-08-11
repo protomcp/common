@@ -4,6 +4,7 @@
 //
 // Descriptor type checking utilities:
 //   - AsFileType, IsFileType - for FileDescriptorProto
+//   - AsMessage, IsMessage - for DescriptorProto without name check
 //   - AsMessageType, IsMessageType - for DescriptorProto with name check
 //   - AsFieldType, IsFieldType - for FieldDescriptorProto
 //   - AsEnumType, IsEnumType - for EnumDescriptorProto

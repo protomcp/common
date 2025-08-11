@@ -74,6 +74,15 @@ func (tc boolCheckTestCase) Test(t *testing.T) {
 // Semantic factory variants for different test functions
 // These reduce boolean parameter confusion and make test intent clearer
 
+// IsMessage factories
+func newIsMessageTrue(name string, desc proto.Message) boolCheckTestCase {
+	return newBoolCheckTestCase(name, desc, true, IsMessage, "IsMessage")
+}
+
+func newIsMessageFalse(name string, desc proto.Message) boolCheckTestCase {
+	return newBoolCheckTestCase(name, desc, false, IsMessage, "IsMessage")
+}
+
 // IsFieldType factories
 func newIsFieldTypeTrue(name string, desc proto.Message) boolCheckTestCase {
 	return newBoolCheckTestCase(name, desc, true, IsFieldType, "IsFieldType")
@@ -192,6 +201,17 @@ func newIsEnumFieldFalse(name string, field proto.Message) boolCheckTestCase {
 }
 
 // Test functions
+
+func TestIsMessage(t *testing.T) {
+	testCases := []boolCheckTestCase{
+		newIsMessageTrue("message descriptor", &descriptorpb.DescriptorProto{}),
+		newIsMessageFalse("field descriptor", &descriptorpb.FieldDescriptorProto{}),
+		newIsMessageFalse("service descriptor", &descriptorpb.ServiceDescriptorProto{}),
+		newIsMessageFalse("nil descriptor", nil),
+	}
+
+	core.RunTestCases(t, testCases)
+}
 
 func TestIsMessageType(t *testing.T) {
 	msgDesc := &descriptorpb.DescriptorProto{
