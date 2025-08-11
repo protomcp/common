@@ -6,8 +6,95 @@
 
 ## Overview
 
-The generator module provides utilities for protoc plugin development, starting
-with test utilities for creating descriptor objects in tests.
+The generator module provides essential utilities for protoc plugin development,
+including descriptor type checking and test utilities for creating descriptor
+objects.
+
+## Descriptor Type Checking
+
+All type checking functions follow the `AsFoo`/`IsFoo` pattern where `AsFoo`
+returns the typed descriptor and a boolean, while `IsFoo` is a convenience
+wrapper that only returns the boolean.
+
+### Type Casting Functions
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `AsMessage` | Cast to DescriptorProto | `desc proto.Message` | `*descriptorpb.DescriptorProto, bool` |
+| `AsMessageWithName` | Cast to DescriptorProto with name check | `desc proto.Message, name string` | `*descriptorpb.DescriptorProto, bool` |
+| `AsFieldType` | Cast to FieldDescriptorProto | `desc proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsEnumType` | Cast to EnumDescriptorProto | `desc proto.Message` | `*descriptorpb.EnumDescriptorProto, bool` |
+| `AsServiceType` | Cast to ServiceDescriptorProto | `desc proto.Message` | `*descriptorpb.ServiceDescriptorProto, bool` |
+| `AsMethodType` | Cast to MethodDescriptorProto | `desc proto.Message` | `*descriptorpb.MethodDescriptorProto, bool` |
+| `AsFileType` | Cast to FileDescriptorProto | `desc proto.Message` | `*descriptorpb.FileDescriptorProto, bool` |
+
+### Type Checking Functions
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `IsMessage` | Check if DescriptorProto | `desc proto.Message` | `bool` |
+| `IsMessageWithName` | Check if DescriptorProto with name | `desc proto.Message, name string` | `bool` |
+| `IsFieldType` | Check if FieldDescriptorProto | `desc proto.Message` | `bool` |
+| `IsEnumType` | Check if EnumDescriptorProto | `desc proto.Message` | `bool` |
+| `IsServiceType` | Check if ServiceDescriptorProto | `desc proto.Message` | `bool` |
+| `IsMethodType` | Check if MethodDescriptorProto | `desc proto.Message` | `bool` |
+| `IsFileType` | Check if FileDescriptorProto | `desc proto.Message` | `bool` |
+
+### Field Characteristic Functions
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| **Cardinality** | | | |
+| `AsRepeatedField` | Cast if repeated field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsMapField` | Cast if map field (heuristic) | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsMapFieldWithMessage` | Cast if map field (definitive) | `field proto.Message, entryMsg proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsOneOfField` | Cast if oneof field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsOptionalField` | Cast if optional field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsRequiredField` | Cast if required field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `IsRepeatedField` | Check if repeated | `field proto.Message` | `bool` |
+| `IsMapField` | Check if map (heuristic) | `field proto.Message` | `bool` |
+| `IsMapFieldWithMessage` | Check if map (definitive) | `field proto.Message, entryMsg proto.Message` | `bool` |
+| `IsOneOfField` | Check if oneof | `field proto.Message` | `bool` |
+| `IsOptionalField` | Check if optional | `field proto.Message` | `bool` |
+| `IsRequiredField` | Check if required | `field proto.Message` | `bool` |
+| **Type Classification** | | | |
+| `AsScalarField` | Cast if scalar type | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsMessageField` | Cast if message type | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsGroupField` | Cast if group type (deprecated) | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsEnumField` | Cast if enum type | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `IsScalarField` | Check if scalar | `field proto.Message` | `bool` |
+| `IsMessageField` | Check if message | `field proto.Message` | `bool` |
+| `IsGroupField` | Check if group (deprecated) | `field proto.Message` | `bool` |
+| `IsEnumField` | Check if enum | `field proto.Message` | `bool` |
+
+### Usage Example
+
+```go
+// Using the AsFoo pattern for type-safe access
+if field, ok := AsFieldType(desc); ok {
+    // field is now typed as *descriptorpb.FieldDescriptorProto
+    if repeatedField, ok := AsRepeatedField(field); ok {
+        fmt.Printf("Field %s is repeated\n", repeatedField.GetName())
+    }
+}
+
+// Simple boolean check when you don't need the typed object
+if IsMessageWithName(desc, "MyMessage") {
+    // Process message type
+}
+
+// Chaining checks for specific field types
+if field, ok := AsFieldType(desc); ok {
+    switch {
+    case IsScalarField(field):
+        // Handle scalar field
+    case IsMessageField(field):
+        // Handle message field
+    case IsEnumField(field):
+        // Handle enum field
+    }
+}
+```
 
 ## Test Utilities
 
@@ -126,27 +213,6 @@ func TestFieldProperties(t *testing.T) {
 The following sections describe planned functionality that will be added
 incrementally as the protomcp.org ecosystem develops.
 
-### Descriptor Type Checking
-
-Essential for the options module and other generators:
-
-```go
-// Type checking - needed by options for conditional logic
-func IsMessageType(desc proto.Message, name string) bool
-func IsFieldType(desc proto.Message) bool
-func IsServiceType(desc proto.Message) bool
-func IsMethodType(desc proto.Message) bool
-func IsEnumType(desc proto.Message) bool
-func IsFileType(desc proto.Message) bool
-
-// Specific type checks
-func IsRepeatedField(field proto.Message) bool
-func IsMapField(field proto.Message) bool
-func IsOneofField(field proto.Message) bool
-func IsOptionalField(field proto.Message) bool
-func IsRequiredField(field proto.Message) bool
-```
-
 ### Path and Naming Utilities
 
 Required by options module for selector matching:
@@ -216,7 +282,7 @@ Needed by options for type-safe option handling:
 func GetFieldType(field proto.Message) descriptorpb.FieldDescriptorProto_Type
 func GetFieldTypeName(field proto.Message) string
 func IsScalarType(field proto.Message) bool
-func IsMessageType(field proto.Message) bool
+func IsMessageWithName(field proto.Message, name string) bool
 func IsEnumType(field proto.Message) bool
 
 // Type lookup

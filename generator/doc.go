@@ -1,6 +1,29 @@
 // Package generator provides utilities for protoc plugin development.
 //
-// Currently provides test utilities for creating descriptor objects:
+// This package includes:
+//
+// Descriptor type checking utilities:
+//   - AsMessage, IsMessage - for DescriptorProto
+//   - AsMessageWithName, IsMessageWithName - for DescriptorProto with name check
+//   - AsFieldType, IsFieldType - for FieldDescriptorProto
+//   - AsEnumType, IsEnumType - for EnumDescriptorProto
+//   - AsServiceType, IsServiceType - for ServiceDescriptorProto
+//   - AsMethodType, IsMethodType - for MethodDescriptorProto
+//   - AsFileType, IsFileType - for FileDescriptorProto
+//
+// Field classification utilities:
+//   - AsScalarField, IsScalarField - for scalar type fields
+//   - AsMessageField, IsMessageField - for message type fields (TYPE_MESSAGE only)
+//   - AsGroupField, IsGroupField - for group type fields (TYPE_GROUP, deprecated)
+//   - AsEnumField, IsEnumField - for enum type fields
+//   - AsRepeatedField, IsRepeatedField - for repeated fields
+//   - AsMapField, IsMapField - for map fields (heuristic check)
+//   - AsMapFieldWithMessage, IsMapFieldWithMessage - for map fields (definitive check)
+//   - AsOneOfField, IsOneOfField - for oneof fields
+//   - AsOptionalField, IsOptionalField - for optional fields
+//   - AsRequiredField, IsRequiredField - for required fields
+//
+// Test utilities for creating descriptor objects:
 //   - NewField - create optional field with scalar type.
 //   - NewRepeatedField - create repeated field.
 //   - NewRequiredField - create required field (proto2).
@@ -23,7 +46,7 @@
 //   - Type constants (TypeString, TypeInt32, etc.) for field types.
 //
 // Future releases will add:
-//   - Descriptor type checking and classification utilities.
+//   - Descriptor traversal utilities.
 //   - Path construction and naming helpers.
 //   - Visitor patterns for walking descriptor trees.
 //   - Code generation output management.
