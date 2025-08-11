@@ -37,63 +37,52 @@ All type checking functions follow the `AsFoo`/`IsFoo` pattern where `AsFoo`
 returns the typed descriptor and a boolean, while `IsFoo` is a convenience
 wrapper that only returns the boolean.
 
-#### Type Casting and Checking
+#### Type Casting Functions
 
-```go
-// Cast to specific descriptor types
-func AsMessage(desc proto.Message) (*descriptorpb.DescriptorProto, bool)
-func AsFieldType(desc proto.Message) (*descriptorpb.FieldDescriptorProto, bool)
-func AsServiceType(desc proto.Message) (
-    *descriptorpb.ServiceDescriptorProto, bool)
-func AsMethodType(desc proto.Message) (
-    *descriptorpb.MethodDescriptorProto, bool)
-func AsEnumType(desc proto.Message) (*descriptorpb.EnumDescriptorProto, bool)
-func AsFileType(desc proto.Message) (*descriptorpb.FileDescriptorProto, bool)
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `AsMessage` | Cast to DescriptorProto | `desc proto.Message` | `*descriptorpb.DescriptorProto, bool` |
+| `AsMessageType` | Cast to DescriptorProto with name check | `desc proto.Message, name string` | `*descriptorpb.DescriptorProto, bool` |
+| `AsFieldType` | Cast to FieldDescriptorProto | `desc proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsEnumType` | Cast to EnumDescriptorProto | `desc proto.Message` | `*descriptorpb.EnumDescriptorProto, bool` |
+| `AsServiceType` | Cast to ServiceDescriptorProto | `desc proto.Message` | `*descriptorpb.ServiceDescriptorProto, bool` |
+| `AsMethodType` | Cast to MethodDescriptorProto | `desc proto.Message` | `*descriptorpb.MethodDescriptorProto, bool` |
+| `AsFileType` | Cast to FileDescriptorProto | `desc proto.Message` | `*descriptorpb.FileDescriptorProto, bool` |
 
-// Cast to message descriptor and verify name
-func AsMessageType(desc proto.Message, name string) (
-    *descriptorpb.DescriptorProto, bool)
+#### Type Checking Functions
 
-// Boolean checks (wrappers around AsFoo functions)
-func IsMessage(desc proto.Message) bool
-func IsMessageType(desc proto.Message, name string) bool
-func IsFieldType(desc proto.Message) bool
-func IsServiceType(desc proto.Message) bool
-func IsMethodType(desc proto.Message) bool
-func IsEnumType(desc proto.Message) bool
-func IsFileType(desc proto.Message) bool
-```
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `IsMessage` | Check if DescriptorProto | `desc proto.Message` | `bool` |
+| `IsMessageType` | Check if DescriptorProto with name | `desc proto.Message, name string` | `bool` |
+| `IsFieldType` | Check if FieldDescriptorProto | `desc proto.Message` | `bool` |
+| `IsEnumType` | Check if EnumDescriptorProto | `desc proto.Message` | `bool` |
+| `IsServiceType` | Check if ServiceDescriptorProto | `desc proto.Message` | `bool` |
+| `IsMethodType` | Check if MethodDescriptorProto | `desc proto.Message` | `bool` |
+| `IsFileType` | Check if FileDescriptorProto | `desc proto.Message` | `bool` |
 
-#### Field Characteristics
+#### Field Characteristic Functions
 
-```go
-// Cast and check field characteristics
-func AsRepeatedField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-func AsMapField(field proto.Message) (*descriptorpb.FieldDescriptorProto, bool)
-func AsOneOfField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-func AsOptionalField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-func AsRequiredField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-func AsScalarField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-func AsMessageField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-func AsEnumField(field proto.Message) (
-    *descriptorpb.FieldDescriptorProto, bool)
-
-// Boolean checks (wrappers around AsFoo functions)
-func IsRepeatedField(field proto.Message) bool
-func IsMapField(field proto.Message) bool
-func IsOneOfField(field proto.Message) bool
-func IsOptionalField(field proto.Message) bool
-func IsRequiredField(field proto.Message) bool
-func IsScalarField(field proto.Message) bool
-func IsMessageField(field proto.Message) bool
-func IsEnumField(field proto.Message) bool
-```
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| **Cardinality** | | | |
+| `AsRepeatedField` | Cast if repeated field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsMapField` | Cast if map field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsOneOfField` | Cast if oneof field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsOptionalField` | Cast if optional field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsRequiredField` | Cast if required field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `IsRepeatedField` | Check if repeated | `field proto.Message` | `bool` |
+| `IsMapField` | Check if map | `field proto.Message` | `bool` |
+| `IsOneOfField` | Check if oneof | `field proto.Message` | `bool` |
+| `IsOptionalField` | Check if optional | `field proto.Message` | `bool` |
+| `IsRequiredField` | Check if required | `field proto.Message` | `bool` |
+| **Type Classification** | | | |
+| `AsScalarField` | Cast if scalar type | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsMessageField` | Cast if message type | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `AsEnumField` | Cast if enum type | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
+| `IsScalarField` | Check if scalar | `field proto.Message` | `bool` |
+| `IsMessageField` | Check if message | `field proto.Message` | `bool` |
+| `IsEnumField` | Check if enum | `field proto.Message` | `bool` |
 
 #### Usage Example
 
@@ -198,9 +187,10 @@ func TestMyGenerator(t *testing.T) {
 func TestFieldTypeChecking(t *testing.T) {
     // Create fields with only the properties needed for testing
     messageField := NewFieldWithType(TypeMessage)
-    repeatedField := NewFieldWithLabel(descriptorpb.FieldDescriptorProto_LABEL_REPEATED)
+    repeatedField := NewFieldWithLabel(
+        descriptorpb.FieldDescriptorProto_LABEL_REPEATED)
     mapField := NewRepeatedMessageField(".MapEntry")
-    
+
     // Test type checking functions
     assert.True(t, IsMessageField(messageField))
     assert.True(t, IsRepeatedField(repeatedField))

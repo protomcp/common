@@ -284,146 +284,128 @@ func TestIsFileType(t *testing.T) {
 	core.RunTestCases(t, testCases)
 }
 
-func TestIsRepeatedField(t *testing.T) {
-	repeatedField := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_REPEATED.Enum(),
-	}
+func isRepeatedFieldTestCases() []boolCheckTestCase {
+	repeatedField := NewFieldWithLabel(descriptorpb.FieldDescriptorProto_LABEL_REPEATED)
+	optionalField := NewFieldWithLabel(descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL)
 
-	optionalField := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
-	}
-
-	testCases := []boolCheckTestCase{
+	return []boolCheckTestCase{
 		newIsRepeatedFieldTrue("repeated field", repeatedField),
 		newIsRepeatedFieldFalse("optional field", optionalField),
 		newIsRepeatedFieldFalse("nil field", nil),
 		newIsRepeatedFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
-
-	core.RunTestCases(t, testCases)
 }
 
-func TestIsMapField(t *testing.T) {
+func TestIsRepeatedField(t *testing.T) {
+	core.RunTestCases(t, isRepeatedFieldTestCases())
+}
+
+func isMapFieldTestCases() []boolCheckTestCase {
 	// In protobuf, map fields are represented as repeated message fields
 	// where the message type is a map entry (has map_entry option set to true)
 	// For testing purposes, we'll check if it's a repeated message field
 	// with a type name that contains "Entry" (simplified check)
-	mapField := &descriptorpb.FieldDescriptorProto{
-		Label:    descriptorpb.FieldDescriptorProto_LABEL_REPEATED.Enum(),
-		Type:     descriptorpb.FieldDescriptorProto_TYPE_MESSAGE.Enum(),
-		TypeName: proto.String(".MapEntry"),
-	}
+	mapField := NewRepeatedMessageField(".MapEntry")
 
 	// Another map field example
-	mapFieldWithOptions := &descriptorpb.FieldDescriptorProto{
-		Label:    descriptorpb.FieldDescriptorProto_LABEL_REPEATED.Enum(),
-		Type:     descriptorpb.FieldDescriptorProto_TYPE_MESSAGE.Enum(),
-		TypeName: proto.String(".MyMapEntry"),
-		Options:  &descriptorpb.FieldOptions{},
-	}
+	mapFieldWithOptions := NewRepeatedMessageField(".MyMapEntry")
+	mapFieldWithOptions.Options = &descriptorpb.FieldOptions{}
 
-	regularRepeated := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_REPEATED.Enum(),
-		Type:  descriptorpb.FieldDescriptorProto_TYPE_STRING.Enum(),
-	}
+	regularRepeated := NewRepeatedField("regular", 1, TypeString)
 
-	regularMessage := &descriptorpb.FieldDescriptorProto{
-		Label:    descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
-		Type:     descriptorpb.FieldDescriptorProto_TYPE_MESSAGE.Enum(),
-		TypeName: proto.String(".SomeMessage"),
-	}
+	regularMessage := NewMessageField("message", 2, ".SomeMessage")
 
-	testCases := []boolCheckTestCase{
+	// Edge cases for AsMapField coverage
+	repeatedMessageNoTypeName := NewRepeatedMessageField("") // empty typename
+
+	repeatedMessageNoEntry := NewRepeatedMessageField(".SomeMessage") // Doesn't contain "Entry"
+
+	return []boolCheckTestCase{
 		newIsMapFieldTrue("map field", mapField),
 		newIsMapFieldTrue("map field with options", mapFieldWithOptions),
 		newIsMapFieldFalse("regular repeated field", regularRepeated),
 		newIsMapFieldFalse("regular message field", regularMessage),
+		newIsMapFieldFalse("repeated message no typename", repeatedMessageNoTypeName),
+		newIsMapFieldFalse("repeated message no entry in name", repeatedMessageNoEntry),
 		newIsMapFieldFalse("nil field", nil),
 		newIsMapFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
-
-	core.RunTestCases(t, testCases)
 }
 
-func TestIsOneOfField(t *testing.T) {
-	oneOfIndex := int32(0)
-	oneOfField := &descriptorpb.FieldDescriptorProto{
-		OneofIndex: &oneOfIndex,
-	}
+func TestIsMapField(t *testing.T) {
+	core.RunTestCases(t, isMapFieldTestCases())
+}
 
-	regularField := &descriptorpb.FieldDescriptorProto{}
+func isOneOfFieldTestCases() []boolCheckTestCase {
+	oneOfField := NewOneOfField("variant", 1, TypeString, 0)
+	regularField := NewField("regular", 2, TypeString)
 
-	testCases := []boolCheckTestCase{
+	return []boolCheckTestCase{
 		newIsOneOfFieldTrue("OneOf field", oneOfField),
 		newIsOneOfFieldFalse("regular field", regularField),
 		newIsOneOfFieldFalse("nil field", nil),
 		newIsOneOfFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
-
-	core.RunTestCases(t, testCases)
 }
 
-func TestIsOptionalField(t *testing.T) {
-	optionalField := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
-	}
+func TestIsOneOfField(t *testing.T) {
+	core.RunTestCases(t, isOneOfFieldTestCases())
+}
 
-	requiredField := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_REQUIRED.Enum(),
-	}
+func isOptionalFieldTestCases() []boolCheckTestCase {
+	optionalField := NewField("optional", 1, TypeString)
+	requiredField := NewRequiredField("required", 2, TypeString)
 
-	proto3Optional := &descriptorpb.FieldDescriptorProto{
-		Label:          descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
-		Proto3Optional: proto.Bool(true),
-	}
+	// Proto3 optional needs special handling
+	proto3Optional := NewField("proto3_optional", 3, TypeString)
+	proto3Optional.Proto3Optional = proto.Bool(true)
 
-	testCases := []boolCheckTestCase{
+	return []boolCheckTestCase{
 		newIsOptionalFieldTrue("optional field", optionalField),
 		newIsOptionalFieldTrue("proto3 optional field", proto3Optional),
 		newIsOptionalFieldFalse("required field", requiredField),
 		newIsOptionalFieldFalse("nil field", nil),
 		newIsOptionalFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
-
-	core.RunTestCases(t, testCases)
 }
 
-func TestIsRequiredField(t *testing.T) {
-	requiredField := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_REQUIRED.Enum(),
-	}
+func TestIsOptionalField(t *testing.T) {
+	core.RunTestCases(t, isOptionalFieldTestCases())
+}
 
-	optionalField := &descriptorpb.FieldDescriptorProto{
-		Label: descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL.Enum(),
-	}
+func isRequiredFieldTestCases() []boolCheckTestCase {
+	requiredField := NewRequiredField("required", 1, TypeString)
+	optionalField := NewField("optional", 2, TypeString)
 
-	testCases := []boolCheckTestCase{
+	return []boolCheckTestCase{
 		newIsRequiredFieldTrue("required field", requiredField),
 		newIsRequiredFieldFalse("optional field", optionalField),
 		newIsRequiredFieldFalse("nil field", nil),
 		newIsRequiredFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
-
-	core.RunTestCases(t, testCases)
 }
 
-func TestIsScalarField(t *testing.T) {
+func TestIsRequiredField(t *testing.T) {
+	core.RunTestCases(t, isRequiredFieldTestCases())
+}
+
+func isScalarFieldTestCases() []boolCheckTestCase {
 	scalarFields := []proto.Message{
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_DOUBLE.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_FLOAT.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_INT64.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_UINT64.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_INT32.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_FIXED64.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_FIXED32.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_BOOL.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_STRING.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_BYTES.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_UINT32.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_SFIXED32.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_SFIXED64.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_SINT32.Enum()},
-		&descriptorpb.FieldDescriptorProto{Type: descriptorpb.FieldDescriptorProto_TYPE_SINT64.Enum()},
+		NewField("double", 1, TypeDouble),
+		NewField("float", 2, TypeFloat),
+		NewField("int64", 3, TypeInt64),
+		NewField("uint64", 4, TypeUInt64),
+		NewField("int32", 5, TypeInt32),
+		NewField("fixed64", 6, TypeFixed64),
+		NewField("fixed32", 7, TypeFixed32),
+		NewField("bool", 8, TypeBool),
+		NewField("string", 9, TypeString),
+		NewField("bytes", 10, TypeBytes),
+		NewField("uint32", 11, TypeUInt32),
+		NewField("sfixed32", 12, TypeSFixed32),
+		NewField("sfixed64", 13, TypeSFixed64),
+		NewField("sint32", 14, TypeSInt32),
+		NewField("sint64", 15, TypeSInt64),
 	}
 
 	testCases := []boolCheckTestCase{}
@@ -434,15 +416,9 @@ func TestIsScalarField(t *testing.T) {
 	}
 
 	// Add negative test cases
-	messageField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_MESSAGE.Enum(),
-	}
-	enumField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_ENUM.Enum(),
-	}
-	groupField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_GROUP.Enum(),
-	}
+	messageField := NewMessageField("message", 16, ".example.Message")
+	enumField := NewEnumField("enum", 17, ".example.Enum")
+	groupField := NewField("group", 18, TypeGroup)
 
 	testCases = append(testCases,
 		newIsScalarFieldFalse("message field", messageField),
@@ -452,27 +428,20 @@ func TestIsScalarField(t *testing.T) {
 		newIsScalarFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	)
 
-	core.RunTestCases(t, testCases)
+	return testCases
 }
 
-func TestIsMessageField(t *testing.T) {
-	messageField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_MESSAGE.Enum(),
-	}
+func TestIsScalarField(t *testing.T) {
+	core.RunTestCases(t, isScalarFieldTestCases())
+}
 
-	groupField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_GROUP.Enum(),
-	}
+func isMessageFieldTestCases() []boolCheckTestCase {
+	messageField := NewFieldWithType(TypeMessage)
+	groupField := NewFieldWithType(TypeGroup)
+	scalarField := NewFieldWithType(TypeString)
+	enumField := NewFieldWithType(TypeEnum)
 
-	scalarField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_STRING.Enum(),
-	}
-
-	enumField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_ENUM.Enum(),
-	}
-
-	testCases := []boolCheckTestCase{
+	return []boolCheckTestCase{
 		newIsMessageFieldTrue("message field", messageField),
 		newIsMessageFieldTrue("group field", groupField), // GROUP is also a message type
 		newIsMessageFieldFalse("scalar field", scalarField),
@@ -480,30 +449,26 @@ func TestIsMessageField(t *testing.T) {
 		newIsMessageFieldFalse("nil field", nil),
 		newIsMessageFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
-
-	core.RunTestCases(t, testCases)
 }
 
-func TestIsEnumField(t *testing.T) {
-	enumField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_ENUM.Enum(),
-	}
+func TestIsMessageField(t *testing.T) {
+	core.RunTestCases(t, isMessageFieldTestCases())
+}
 
-	scalarField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_INT32.Enum(),
-	}
+func isEnumFieldTestCases() []boolCheckTestCase {
+	enumField := NewFieldWithType(TypeEnum)
+	scalarField := NewFieldWithType(TypeInt32)
+	messageField := NewFieldWithType(TypeMessage)
 
-	messageField := &descriptorpb.FieldDescriptorProto{
-		Type: descriptorpb.FieldDescriptorProto_TYPE_MESSAGE.Enum(),
-	}
-
-	testCases := []boolCheckTestCase{
+	return []boolCheckTestCase{
 		newIsEnumFieldTrue("enum field", enumField),
 		newIsEnumFieldFalse("scalar field", scalarField),
 		newIsEnumFieldFalse("message field", messageField),
 		newIsEnumFieldFalse("nil field", nil),
 		newIsEnumFieldFalse("wrong type", &descriptorpb.DescriptorProto{}),
 	}
+}
 
-	core.RunTestCases(t, testCases)
+func TestIsEnumField(t *testing.T) {
+	core.RunTestCases(t, isEnumFieldTestCases())
 }
