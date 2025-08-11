@@ -1,14 +1,31 @@
-// Package generator is a PLACEHOLDER module demonstrating the planned
-// architecture for common utilities for protoc plugin development.
+// Package generator provides utilities for protoc plugin development.
 //
-// ⚠️ WARNING: This package is not yet implemented. It exists only as a
-// placeholder to show the intended structure and planned features.
+// Currently provides test utilities for creating descriptor objects:
+//   - NewField - create optional field with scalar type.
+//   - NewRepeatedField - create repeated field.
+//   - NewRequiredField - create required field (proto2).
+//   - NewMessageField - create message type field.
+//   - NewEnumField - create enum type field.
+//   - NewMapField - create map field.
+//   - NewOneOfField - create oneof field.
+//   - NewFieldWithType - create minimal field with only type set.
+//   - NewFieldWithLabel - create minimal field with only label set.
+//   - NewRepeatedMessageField - create repeated message field.
+//   - NewMessage - create message descriptor.
+//   - NewMessageWithNested - create message with nested types.
+//   - NewEnum - create enum descriptor.
+//   - NewEnumValue - create enum value descriptor.
+//   - NewService - create service descriptor.
+//   - NewMethod - create method descriptor.
+//   - NewFile - create file descriptor.
+//   - NewFileWithTypes - create file with messages, enums, and services.
+//   - NewOneOf - create oneof descriptor.
+//   - Type constants (TypeString, TypeInt32, etc.) for field types.
 //
-// When implemented, this package will provide:
-//   - Descriptor traversal and type checking utilities.
+// Future releases will add:
+//   - Descriptor type checking and classification utilities.
 //   - Path construction and naming helpers.
-//   - Helper functions for walking descriptor trees.
-//
-// The actual implementation will be added in future releases as the
-// protomcp.org ecosystem develops.
+//   - Visitor patterns for walking descriptor trees.
+//   - Code generation output management.
+//   - Context management for build environments.
 package generator

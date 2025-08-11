@@ -1,26 +1,130 @@
-# Generator Module (PLACEHOLDER)
+# Generator Module
 
 [![Go Reference][godoc-badge]][godoc-link]
 [![Go Report Card][goreportcard-badge]][goreportcard-link]
 [![codecov][codecov-badge]][codecov-link]
 
-> [!WARNING]
-> **PLACEHOLDER MODULE - NOT YET IMPLEMENTED**
->
-> This module is a placeholder showing the planned architecture for common
-> utilities for protoc plugin code generators. It will provide helpers for
-> working with protocol buffer descriptors, managing code generation, and
-> traversing descriptor trees.
-
 ## Overview
 
-**PLANNED FUNCTIONALITY (NOT YET AVAILABLE):**
+The generator module provides utilities for protoc plugin development, starting
+with test utilities for creating descriptor objects in tests.
 
-The generator module will provide essential utilities that all protoc plugins
-need when generating code from protocol buffer descriptors. It will serve as a
-foundation for building robust code generators with consistent patterns.
+## Test Utilities
 
-## Core Utilities
+Helper functions for creating descriptor objects in tests:
+
+### Field Creation Functions
+
+Complete field constructors (with name and number):
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `NewField` | Create optional field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewRepeatedField` | Create repeated field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewRequiredField` | Create required field (proto2) | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewMessageField` | Create message type field | `name string, number int32, typeName string` | `*descriptorpb.FieldDescriptorProto` |
+| `NewEnumField` | Create enum type field | `name string, number int32, typeName string` | `*descriptorpb.FieldDescriptorProto` |
+| `NewMapField` | Create map field | `name string, number int32, entryTypeName string` | `*descriptorpb.FieldDescriptorProto` |
+| `NewOneOfField` | Create oneof field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type, oneofIndex int32` | `*descriptorpb.FieldDescriptorProto` |
+
+Minimal field constructors (for testing specific properties):
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `NewFieldWithType` | Create field with type only | `fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewFieldWithLabel` | Create field with label only | `label descriptorpb.FieldDescriptorProto_Label` | `*descriptorpb.FieldDescriptorProto` |
+| `NewRepeatedMessageField` | Create repeated message field | `typeName string` | `*descriptorpb.FieldDescriptorProto` |
+
+### Descriptor Creation Functions
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `NewMessage` | Create message descriptor | `name string, fields ...*descriptorpb.FieldDescriptorProto` | `*descriptorpb.DescriptorProto` |
+| `NewMessageWithNested` | Create message with nested types | `name string, messages []*descriptorpb.DescriptorProto, enums []*descriptorpb.EnumDescriptorProto` | `*descriptorpb.DescriptorProto` |
+| `NewEnum` | Create enum descriptor | `name string, values ...string` | `*descriptorpb.EnumDescriptorProto` |
+| `NewEnumValue` | Create enum value descriptor | `name string, number int32` | `*descriptorpb.EnumValueDescriptorProto` |
+| `NewService` | Create service descriptor | `name string, methods ...*descriptorpb.MethodDescriptorProto` | `*descriptorpb.ServiceDescriptorProto` |
+| `NewMethod` | Create method descriptor | `name, inputType, outputType string` | `*descriptorpb.MethodDescriptorProto` |
+| `NewFile` | Create file descriptor | `name, pkg string, messages []*descriptorpb.DescriptorProto` | `*descriptorpb.FileDescriptorProto` |
+| `NewFileWithTypes` | Create file with types | `name, pkg string, messages []*descriptorpb.DescriptorProto, enums []*descriptorpb.EnumDescriptorProto, services []*descriptorpb.ServiceDescriptorProto` | `*descriptorpb.FileDescriptorProto` |
+| `NewOneOf` | Create oneof descriptor | `name string` | `*descriptorpb.OneofDescriptorProto` |
+
+### Type Constants
+
+<!-- cspell:ignore SINT SFIXED -->
+
+| Constant | Type | Value |
+|----------|------|-------|
+| `TypeDouble` | Floating point | `descriptorpb.FieldDescriptorProto_TYPE_DOUBLE` |
+| `TypeFloat` | Floating point | `descriptorpb.FieldDescriptorProto_TYPE_FLOAT` |
+| `TypeInt64` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_INT64` |
+| `TypeUInt64` | Unsigned integer | `descriptorpb.FieldDescriptorProto_TYPE_UINT64` |
+| `TypeInt32` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_INT32` |
+| `TypeFixed64` | Fixed size | `descriptorpb.FieldDescriptorProto_TYPE_FIXED64` |
+| `TypeFixed32` | Fixed size | `descriptorpb.FieldDescriptorProto_TYPE_FIXED32` |
+| `TypeBool` | Boolean | `descriptorpb.FieldDescriptorProto_TYPE_BOOL` |
+| `TypeString` | String | `descriptorpb.FieldDescriptorProto_TYPE_STRING` |
+| `TypeBytes` | Binary | `descriptorpb.FieldDescriptorProto_TYPE_BYTES` |
+| `TypeUInt32` | Unsigned integer | `descriptorpb.FieldDescriptorProto_TYPE_UINT32` |
+| `TypeSFixed32` | Signed fixed | `descriptorpb.FieldDescriptorProto_TYPE_SFIXED32` |
+| `TypeSFixed64` | Signed fixed | `descriptorpb.FieldDescriptorProto_TYPE_SFIXED64` |
+| `TypeSInt32` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_SINT32` |
+| `TypeSInt64` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_SINT64` |
+| `TypeGroup` | Group (deprecated) | `descriptorpb.FieldDescriptorProto_TYPE_GROUP` |
+| `TypeMessage` | Message | `descriptorpb.FieldDescriptorProto_TYPE_MESSAGE` |
+| `TypeEnum` | Enum | `descriptorpb.FieldDescriptorProto_TYPE_ENUM` |
+
+### Example Usage
+
+```go
+import (
+    "testing"
+
+    "darvaza.org/core"
+    "google.golang.org/protobuf/proto"
+    "google.golang.org/protobuf/types/descriptorpb"
+    "protomcp.org/common/generator"
+)
+
+func TestMyGenerator(t *testing.T) {
+    // Creating complete message descriptors for testing
+    msg := &descriptorpb.DescriptorProto{
+        Name: proto.String("User"),
+        Field: []*descriptorpb.FieldDescriptorProto{
+            generator.NewField("id", 1, generator.TypeInt64),
+            generator.NewRepeatedField("tags", 2, generator.TypeString),
+            generator.NewMessageField("profile", 3, ".example.Profile"),
+            generator.NewEnumField("status", 4, ".example.Status"),
+            generator.NewMapField("metadata", 5, ".MetadataEntry"),
+            generator.NewOneOfField("variant", 6, generator.TypeBool, 0),
+        },
+    }
+    // Test generator with the constructed message
+    core.AssertNotNil(t, msg, "message")
+    core.AssertEqual(t, "User", msg.GetName(), "message name")
+}
+
+// Minimal field descriptors for testing specific behaviour
+func TestFieldProperties(t *testing.T) {
+    // Create fields with only the properties needed for testing
+    messageField := generator.NewFieldWithType(generator.TypeMessage)
+    repeatedField := generator.NewFieldWithLabel(
+        descriptorpb.FieldDescriptorProto_LABEL_REPEATED)
+    mapField := generator.NewRepeatedMessageField(".MapEntry")
+
+    // Test field properties using core assertions
+    core.AssertEqual(t, descriptorpb.FieldDescriptorProto_TYPE_MESSAGE,
+        messageField.GetType(), "field type")
+    core.AssertEqual(t, descriptorpb.FieldDescriptorProto_LABEL_REPEATED,
+        repeatedField.GetLabel(), "field label")
+    core.AssertNotNil(t, mapField.TypeName, "map field type name")
+}
+```
+
+## Planned Core Functionality
+
+The following sections describe planned functionality that will be added
+incrementally as the protomcp.org ecosystem develops.
 
 ### Descriptor Type Checking
 
@@ -145,63 +249,6 @@ func GetLeadingComments(desc proto.Message) string
 func GetTrailingComments(desc proto.Message) string
 ```
 
-## Integration with Options Module
-
-The options module relies heavily on these utilities:
-
-1. **Type Checking**: For conditional option application
-2. **Path Building**: For selector matching
-3. **Traversal**: For applying hooks to matching elements
-4. **Context**: Shared context for environment-aware options
-
-Example usage in options module:
-
-```go
-// options module using generator utilities
-func (r *Registry) applyHooks(file proto.Message) error {
-    var hookErr error
-
-    err := generator.ForEachMessage(file, func(msg proto.Message) bool {
-        // Apply hooks to this message and its fields
-        hookErr = r.applyMessageHooks(file, msg)
-        return hookErr == nil // continue if no error
-    })
-
-    if hookErr != nil {
-        return hookErr
-    }
-    return err
-}
-
-func (r *Registry) applyMessageHooks(file, msg proto.Message) error {
-    msgPath := generator.GetFullName(msg)
-
-    // Apply hook to message itself if it matches
-    if MatchesSelector(r.selector, msgPath) {
-        if err := r.runHooks(msg, r.GetMessageOptions(file, msg)); err != nil {
-            return err
-        }
-    }
-
-    // Apply hooks to each field
-    var fieldErr error
-    err := generator.ForEachField(msg, func(field proto.Message) bool {
-        fieldPath := generator.GetFieldPath(file, msg, field)
-        if MatchesSelector(r.selector, fieldPath) {
-            opts := r.GetFieldOptions(file, msg, field)
-            fieldErr = r.runHooks(field, opts)
-            return fieldErr == nil // continue if no error
-        }
-        return true // continue to next field
-    })
-
-    if fieldErr != nil {
-        return fieldErr
-    }
-    return err
-}
-```
-
 ## Best Practices
 
 1. **Nil Safety**: All functions handle nil inputs gracefully.
@@ -216,13 +263,6 @@ func (r *Registry) applyMessageHooks(file, msg proto.Message) error {
 - Dependency graph visualization.
 - Performance optimizations for large schemas.
 - Parallel traversal support.
-
----
-
-**NOTE:** This entire module is currently a placeholder demonstrating the
-intended architecture and planned features. Actual implementation will be added
-in future releases as the protomcp.org ecosystem develops and the need for
-these utilities becomes concrete.
 
 [godoc-badge]: https://pkg.go.dev/badge/protomcp.org/common/generator.svg
 [godoc-link]: https://pkg.go.dev/protomcp.org/common/generator
