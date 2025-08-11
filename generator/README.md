@@ -17,6 +17,7 @@ for building robust code generators with consistent patterns.
 - **Descriptor Type Checking** - Complete set of type checking and casting
   functions
 - **Field Characteristic Checking** - Comprehensive field property detection
+- **Test Utilities** - Helper functions for creating test descriptor objects
 
 ### 🚧 Planned
 
@@ -120,6 +121,90 @@ if field, ok := AsFieldType(desc); ok {
     case IsEnumField(field):
         // Handle enum field
     }
+}
+```
+
+### Test Utilities
+
+Helper functions for creating descriptor objects in tests:
+
+#### Field Creation Functions
+
+Complete field constructors (with name and number):
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `NewField` | Create optional field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewRepeatedField` | Create repeated field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewRequiredField` | Create required field (proto2) | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewMessageField` | Create message type field | `name string, number int32, typeName string` | `*descriptorpb.FieldDescriptorProto` |
+| `NewEnumField` | Create enum type field | `name string, number int32, typeName string` | `*descriptorpb.FieldDescriptorProto` |
+| `NewMapField` | Create map field | `name string, number int32, entryTypeName string` | `*descriptorpb.FieldDescriptorProto` |
+| `NewOneOfField` | Create oneof field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type, oneofIndex int32` | `*descriptorpb.FieldDescriptorProto` |
+
+Minimal field constructors (for testing specific properties):
+
+| Function | Purpose | Parameters | Returns |
+|----------|---------|------------|---------|
+| `NewFieldWithType` | Create field with type only | `fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
+| `NewFieldWithLabel` | Create field with label only | `label descriptorpb.FieldDescriptorProto_Label` | `*descriptorpb.FieldDescriptorProto` |
+| `NewRepeatedMessageField` | Create repeated message field | `typeName string` | `*descriptorpb.FieldDescriptorProto` |
+
+#### Type Constants
+
+<!-- cspell:ignore SINT -->
+
+| Constant | Type | Value |
+|----------|------|-------|
+| `TypeDouble` | Floating point | `descriptorpb.FieldDescriptorProto_TYPE_DOUBLE` |
+| `TypeFloat` | Floating point | `descriptorpb.FieldDescriptorProto_TYPE_FLOAT` |
+| `TypeInt64` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_INT64` |
+| `TypeUInt64` | Unsigned integer | `descriptorpb.FieldDescriptorProto_TYPE_UINT64` |
+| `TypeInt32` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_INT32` |
+| `TypeFixed64` | Fixed size | `descriptorpb.FieldDescriptorProto_TYPE_FIXED64` |
+| `TypeFixed32` | Fixed size | `descriptorpb.FieldDescriptorProto_TYPE_FIXED32` |
+| `TypeBool` | Boolean | `descriptorpb.FieldDescriptorProto_TYPE_BOOL` |
+| `TypeString` | String | `descriptorpb.FieldDescriptorProto_TYPE_STRING` |
+| `TypeBytes` | Binary | `descriptorpb.FieldDescriptorProto_TYPE_BYTES` |
+| `TypeUInt32` | Unsigned integer | `descriptorpb.FieldDescriptorProto_TYPE_UINT32` |
+| `TypeSFixed32` | Signed fixed | `descriptorpb.FieldDescriptorProto_TYPE_SFIXED32` |
+| `TypeSFixed64` | Signed fixed | `descriptorpb.FieldDescriptorProto_TYPE_SFIXED64` |
+| `TypeSInt32` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_SINT32` |
+| `TypeSInt64` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_SINT64` |
+| `TypeGroup` | Group (deprecated) | `descriptorpb.FieldDescriptorProto_TYPE_GROUP` |
+| `TypeMessage` | Message | `descriptorpb.FieldDescriptorProto_TYPE_MESSAGE` |
+| `TypeEnum` | Enum | `descriptorpb.FieldDescriptorProto_TYPE_ENUM` |
+
+#### Example Usage
+
+```go
+func TestMyGenerator(t *testing.T) {
+    // Creating complete message descriptors for testing
+    msg := &descriptorpb.DescriptorProto{
+        Name: proto.String("User"),
+        Field: []*descriptorpb.FieldDescriptorProto{
+            NewField("id", 1, TypeInt64),
+            NewRepeatedField("tags", 2, TypeString),
+            NewMessageField("profile", 3, ".example.Profile"),
+            NewEnumField("status", 4, ".example.Status"),
+            NewMapField("metadata", 5, ".MetadataEntry"),
+            NewOneOfField("variant", 6, TypeBool, 0),
+        },
+    }
+    // Test generator with the constructed message
+}
+
+// Minimal field descriptors for testing specific behaviors
+func TestFieldTypeChecking(t *testing.T) {
+    // Create fields with only the properties needed for testing
+    messageField := NewFieldWithType(TypeMessage)
+    repeatedField := NewFieldWithLabel(descriptorpb.FieldDescriptorProto_LABEL_REPEATED)
+    mapField := NewRepeatedMessageField(".MapEntry")
+    
+    // Test type checking functions
+    assert.True(t, IsMessageField(messageField))
+    assert.True(t, IsRepeatedField(repeatedField))
+    assert.True(t, IsMapField(mapField))
 }
 ```
 
