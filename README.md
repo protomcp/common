@@ -221,7 +221,7 @@ import (
 
 ## Development
 
-For development guidelines, please refer to [AGENT.md](AGENT.md).
+For development guidelines, please refer to [AGENTS.md](AGENTS.md).
 
 ## License
 
