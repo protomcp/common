@@ -19,7 +19,7 @@ wrapper that only returns the boolean.
 ### Type Casting Functions
 
 | Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
+| -------- | ------- | ---------- | ------- |
 | `AsMessage` | Cast to DescriptorProto | `desc proto.Message` | `*descriptorpb.DescriptorProto, bool` |
 | `AsMessageWithName` | Cast to DescriptorProto with name check | `desc proto.Message, name string` | `*descriptorpb.DescriptorProto, bool` |
 | `AsFieldType` | Cast to FieldDescriptorProto | `desc proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
@@ -31,7 +31,7 @@ wrapper that only returns the boolean.
 ### Type Checking Functions
 
 | Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
+| -------- | ------- | ---------- | ------- |
 | `IsMessage` | Check if DescriptorProto | `desc proto.Message` | `bool` |
 | `IsMessageWithName` | Check if DescriptorProto with name | `desc proto.Message, name string` | `bool` |
 | `IsFieldType` | Check if FieldDescriptorProto | `desc proto.Message` | `bool` |
@@ -43,7 +43,7 @@ wrapper that only returns the boolean.
 ### Field Characteristic Functions
 
 | Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
+| -------- | ------- | ---------- | ------- |
 | **Cardinality** | | | |
 | `AsRepeatedField` | Cast if repeated field | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
 | `AsMapField` | Cast if map field (heuristic) | `field proto.Message` | `*descriptorpb.FieldDescriptorProto, bool` |
@@ -105,7 +105,7 @@ Helper functions for creating descriptor objects in tests:
 Complete field constructors (with name and number):
 
 | Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
+| -------- | ------- | ---------- | ------- |
 | `NewField` | Create optional field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
 | `NewRepeatedField` | Create repeated field | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
 | `NewRequiredField` | Create required field (proto2) | `name string, number int32, fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
@@ -117,7 +117,7 @@ Complete field constructors (with name and number):
 Minimal field constructors (for testing specific properties):
 
 | Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
+| -------- | ------- | ---------- | ------- |
 | `NewFieldWithType` | Create field with type only | `fieldType descriptorpb.FieldDescriptorProto_Type` | `*descriptorpb.FieldDescriptorProto` |
 | `NewFieldWithLabel` | Create field with label only | `label descriptorpb.FieldDescriptorProto_Label` | `*descriptorpb.FieldDescriptorProto` |
 | `NewRepeatedMessageField` | Create repeated message field | `typeName string` | `*descriptorpb.FieldDescriptorProto` |
@@ -125,7 +125,7 @@ Minimal field constructors (for testing specific properties):
 ### Descriptor Creation Functions
 
 | Function | Purpose | Parameters | Returns |
-|----------|---------|------------|---------|
+| -------- | ------- | ---------- | ------- |
 | `NewMessage` | Create message descriptor | `name string, fields ...*descriptorpb.FieldDescriptorProto` | `*descriptorpb.DescriptorProto` |
 | `NewMessageWithNested` | Create message with nested types | `name string, messages []*descriptorpb.DescriptorProto, enums []*descriptorpb.EnumDescriptorProto` | `*descriptorpb.DescriptorProto` |
 | `NewEnum` | Create enum descriptor | `name string, values ...string` | `*descriptorpb.EnumDescriptorProto` |
@@ -141,7 +141,7 @@ Minimal field constructors (for testing specific properties):
 <!-- cspell:ignore SINT SFIXED -->
 
 | Constant | Type | Value |
-|----------|------|-------|
+| -------- | ---- | ----- |
 | `TypeDouble` | Floating point | `descriptorpb.FieldDescriptorProto_TYPE_DOUBLE` |
 | `TypeFloat` | Floating point | `descriptorpb.FieldDescriptorProto_TYPE_FLOAT` |
 | `TypeInt64` | Signed integer | `descriptorpb.FieldDescriptorProto_TYPE_INT64` |
